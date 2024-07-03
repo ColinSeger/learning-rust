@@ -6,6 +6,9 @@
     Create a application that can display 2D drawings
   </li>  
   <li>
+    Commit atleast 1 time each day no matter how minor
+  </li>
+  <li>
     TODO
   </li>
 </ul>

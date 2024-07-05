@@ -3,11 +3,13 @@ extern crate winit;
 
 use std::sync::Arc;//Some heap allocated thing (Should read more)
 
+//Use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::{
-    EventsLoop, 
-    WindowBuilder, 
-    dpi::LogicalSize
+    event_loop::EventLoop, 
+    dpi::LogicalSize,
+    event::WindowEvent
 };
+use winit::window::{Window, WindowId};
 
 use vulkano::instance::{
     Instance,
@@ -21,13 +23,13 @@ const HEIGHT: u32 = 600;
 
 struct TriangleAppTest{//This is probably the application itself
     instance: Option<Arc<Instance>>,
-    events_loop: EventsLoop,
+    events_loop: Window,
 }
 
 impl TriangleAppTest{
     pub fn initialize() -> Self {
-        let instance = Self::create_instance();
-        let events_loop = Self::init_window();
+        let instance: Option<Arc<Instance>> = Self::create_instance();
+        let events_loop: Window = Self::init_window();
         Self{
             instance,
             events_loop,
@@ -36,16 +38,16 @@ impl TriangleAppTest{
 
     //This function creates a window titled Vulkan with the defined size
     //Not sure what events loop is yet (Should research)
-    fn init_window() -> EventsLoop {
-        let events_loop = EventsLoop::new();
-        let _window = WindowBuilder::new()
-            .with_title("Vulkan")
-            .with_dimensions(LogicalSize::new(f64::from(WIDTH), f64::from(HEIGHT)))
+    fn init_window() -> Window {
+        let events_loop: Result<EventLoop<()>, winit::error::EventLoopError> = EventLoop::new();
+        let _window = Some(events_loop.create_window(Window::default_attributes()))
+            .with_title("Vulkan")//Window name
+            .with_dimensions(LogicalSize::new(f64::from(WIDTH), f64::from(HEIGHT)))//Window size
             .build(&events_loop);
-        events_loop
+        return events_loop;
     }
 
-    fn create_instance() -> Arc<Instance>{
+    fn create_instance() -> Option<Arc<Instance>>{
         //Creates a varible that contains the device extenstion support?
         let supported_extensions = 
             InstanceExtensions::supported_by_core()
@@ -67,8 +69,7 @@ impl TriangleAppTest{
         //Create the instance using refrence to the varibles
         Instance::new(
             Some(&app_info),
-             &required_extensions,
-            None
+             &required_extensions
         ).expect("Failed to create Vulkan instance");
     }
 

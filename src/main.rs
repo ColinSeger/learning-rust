@@ -2,6 +2,7 @@ extern crate vulkano;
 extern crate winit;
 
 mod open_gl_context;
+mod vulkan_context;
 
 //use open_gl_context::gl_window;
 
@@ -16,4 +17,5 @@ fn main() {
         //Renderer::OpenGL => println!("OpenGl"),
         Renderer::Vulkan => println!("Vulkan")
     }
+
 }

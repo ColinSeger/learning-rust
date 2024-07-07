@@ -1,19 +1,20 @@
 extern crate vulkano;
 extern crate winit;
 
-use std::{collections::HashMap, sync::Arc};//Some heap allocated thing (Should read more)
+use std::{
+    collections::HashMap, //Hashmap :)
+    sync::Arc//Some heap allocated thing (Should read more)
+};
 
 //Use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::{
+    application::ApplicationHandler,
+    dpi::LogicalSize, 
+    event::WindowEvent, 
     event_loop::{
-        EventLoop,
-        ActiveEventLoop
-    }, 
-    dpi::LogicalSize,
-    event::WindowEvent,
-    window::{
-        Window, 
-        WindowId
+        ActiveEventLoop, EventLoop
+    }, window::{
+        self, Window, WindowId
     }
 };
 
@@ -32,29 +33,57 @@ const HEIGHT: u32 = 600;
 
 struct TriangleAppTest{//This is probably the application itself
     instance: Option<Arc<Instance>>,
-    windows: HashMap<WindowId, WindowState>,
+    windows: HashMap<WindowId, Window>,
 }
 
+impl ApplicationHandler for TriangleAppTest {
+
+    fn window_event
+        (
+            &mut self,
+            event_loop: &ActiveEventLoop,
+            window_id: WindowId,
+            event: WindowEvent,
+        ){
+        match event {
+            WindowEvent::CloseRequested => {
+                self.windows.clear();
+                event_loop.exit();
+            }
+        }
+    }
+}
+
+/* 
 impl TriangleAppTest{
     pub fn initialize() -> Self {
         let instance: Option<Arc<Instance>> = Self::create_instance();
-        let windows: Window = Self::init_window();
+
+        let mut windows: HashMap<WindowId, Window>;
+
+        let main_event_loop = EventLoop::new().unwrap();
+
+        let main_window: Window = main_event_loop.create_window(Window::default_attributes()).unwrap();
+        
         Self{
             instance,
+            
             windows,
         }
     }
 
     //This function creates a window titled Vulkan with the defined size
     //Not sure what events loop is yet (Should research)
-    fn init_window() -> Window {
+    fn create_new_window() -> Window {
         let mut events_loop: EventLoop<()> = EventLoop::new().unwrap();
         /* */
         let _window = Some(events_loop.create_window(Window::default_attributes()))
             .with_title("Vulkan")//Window name
             .with_dimensions(LogicalSize::new(f64::from(WIDTH), f64::from(HEIGHT)))//Window size
             .build(&events_loop);
-        return events_loop;
+        //return events_loop;
+
+        return _window;
     }
 
     fn create_instance() -> Option<Arc<Instance>>{
@@ -101,7 +130,7 @@ impl TriangleAppTest{
             }
         }
     }
-}
+}*/
 
 pub fn vulkan_instance(){
     let mut vulkan_app = TriangleAppTest::initialize();

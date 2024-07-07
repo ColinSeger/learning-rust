@@ -1,21 +1,30 @@
 extern crate vulkano;
 extern crate winit;
 
-use std::sync::Arc;//Some heap allocated thing (Should read more)
+use std::{collections::HashMap, sync::Arc};//Some heap allocated thing (Should read more)
 
 //Use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::{
-    event_loop::EventLoop, 
+    event_loop::{
+        EventLoop,
+        ActiveEventLoop
+    }, 
     dpi::LogicalSize,
-    event::WindowEvent
+    event::WindowEvent,
+    window::{
+        Window, 
+        WindowId
+    }
 };
-use winit::window::{Window, WindowId};
 
-use vulkano::instance::{
-    Instance,
-    InstanceExtensions,
-    ApplicationInfo,
+use vulkano::{
+    instance::{
+        Instance,
+        InstanceCreateInfo,
+        InstanceExtensions
+    },
     Version,
+    VulkanLibrary
 };
 
 const WIDTH: u32 = 800;
@@ -23,23 +32,24 @@ const HEIGHT: u32 = 600;
 
 struct TriangleAppTest{//This is probably the application itself
     instance: Option<Arc<Instance>>,
-    events_loop: Window,
+    windows: HashMap<WindowId, WindowState>,
 }
 
 impl TriangleAppTest{
     pub fn initialize() -> Self {
         let instance: Option<Arc<Instance>> = Self::create_instance();
-        let events_loop: Window = Self::init_window();
+        let windows: Window = Self::init_window();
         Self{
             instance,
-            events_loop,
+            windows,
         }
     }
 
     //This function creates a window titled Vulkan with the defined size
     //Not sure what events loop is yet (Should research)
     fn init_window() -> Window {
-        let events_loop: Result<EventLoop<()>, winit::error::EventLoopError> = EventLoop::new();
+        let mut events_loop: EventLoop<()> = EventLoop::new().unwrap();
+        /* */
         let _window = Some(events_loop.create_window(Window::default_attributes()))
             .with_title("Vulkan")//Window name
             .with_dimensions(LogicalSize::new(f64::from(WIDTH), f64::from(HEIGHT)))//Window size
@@ -48,29 +58,32 @@ impl TriangleAppTest{
     }
 
     fn create_instance() -> Option<Arc<Instance>>{
+
+        let vk_library: Arc<VulkanLibrary> = VulkanLibrary::new().unwrap();
+
         //Creates a varible that contains the device extenstion support?
         let supported_extensions = 
-            InstanceExtensions::supported_by_core()
-            .expect("Failed to retrive supported extenstions");
+            InstanceExtensions::empty();//I need to research how to acctually do this
 
         //Prints extenstion support for debug pourpases? (My spelling sucks)
-        printls!("Supported extenstions: {:?}", supported_extensions);
-
+        println!("Supported extenstions: {:?}", supported_extensions);
+        /* 
         let app_info = ApplicationInfo{
             applictaion_name: Some("Triangle app".into()),//Should search more about Some and into()
             application_version: Some(Version{major: 1, minor: 0, patch: 0}),//version num? 1.00?
             engine_name: Some("No engine".into()),//Do not remember what this implies should google VKApplicationinfo pEngineName
             engine_version: Some(Version{major: 1, minor: 0, patch: 0}),
         };
+        */
 
         //Remember to research this (Something about finding that extentions are needed)
-        let required_extensions = vulkano::required_extensions();
+        //let required_extensions = vulkano::required_extensions();
 
         //Create the instance using refrence to the varibles
-        Instance::new(
-            Some(&app_info),
-             &required_extensions
-        ).expect("Failed to create Vulkan instance");
+        return Some( Instance::new(
+            vk_library,
+            InstanceCreateInfo::application_from_cargo_toml(),
+        ).expect("Failed to create Vulkan instance"));
     }
 
     //If my understanding is correct this is a reapeating loop that check if any action is preformed

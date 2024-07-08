@@ -10,7 +10,11 @@ use std::{
 use winit::{
     application::ApplicationHandler,
     dpi::LogicalSize, 
-    event::WindowEvent, 
+    event::{
+        ElementState,
+        WindowEvent,
+        KeyEvent
+    }, 
     event_loop::{
         ActiveEventLoop, EventLoop
     }, window::{
@@ -32,7 +36,8 @@ const WIDTH: u32 = 800;
 const HEIGHT: u32 = 600;
 
 struct TriangleAppTest{//This is probably the application itself
-    instance: Option<Arc<Instance>>,
+    //instance: Option<Arc<Instance>>, Implement later
+    parent_window_id: Option<WindowId>,
     windows: HashMap<WindowId, Window>,
 }
 
@@ -49,7 +54,30 @@ impl ApplicationHandler for TriangleAppTest {
             WindowEvent::CloseRequested => {
                 self.windows.clear();
                 event_loop.exit();
-            }
+            },
+            WindowEvent::CursorEntered { device_id: _ } => {
+                //You need to do something special on x11
+                println!("cursor entered in the window {window_id:?}");
+            },
+            WindowEvent::KeyboardInput {
+                event: KeyEvent { state: ElementState::Pressed, .. },
+                ..
+            } => {
+                let parent_window = self.windows.get(&self.parent_window_id.unwrap()).unwrap();
+                let child_window = window_id;//Spaw the window not use window id
+                let child_id = child_window.id();
+                println!("Child window created with id: {child_id:?}");
+                self.windows.insert(child_id, child_window);
+            },
+            WindowEvent::RedrawRequested => {
+                if let Some(window) = self.windows.get(&window_id) {
+
+                    //They use
+                    //fill::fill_window(window);
+                    //I need to figure out what fill is
+                }
+            },
+            _ => (),
         }
     }
 }

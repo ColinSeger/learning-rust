@@ -8,17 +8,28 @@ use std::{
 
 //Use winit::event_loop::{ActiveEventLoop, EventLoop};
 use winit::{
-    application::ApplicationHandler,
-    dpi::LogicalSize, 
+    application::ApplicationHandler, 
+    dpi::{
+        LogicalPosition, 
+        LogicalSize, 
+        Position
+    }, 
     event::{
         ElementState,
-        WindowEvent,
-        KeyEvent
+        KeyEvent, 
+        WindowEvent
     }, 
     event_loop::{
-        ActiveEventLoop, EventLoop
-    }, window::{
-        self, Window, WindowId
+        self, ActiveEventLoop, EventLoop
+    }, 
+    raw_window_handle::{
+        HasRawWindowHandle, 
+        HasWindowHandle
+    }, 
+    window::{
+        self, 
+        Window, 
+        WindowId
     }
 };
 
@@ -37,10 +48,20 @@ const HEIGHT: u32 = 600;
 
 struct TriangleAppTest{//This is probably the application itself
     //instance: Option<Arc<Instance>>, Implement later
-    parent_window_id: Option<WindowId>,
-    windows: HashMap<WindowId, Window>,
+    //parent_window_id: Option<WindowId>,
+    //windows: HashMap<WindowId, Window>,
+    window: Window
+
 }
 
+impl TriangleAppTest {
+    fn test(){
+        let mut event_loop = EventLoop::new().unwrap();
+        let window = event_loop.create_window()
+    }
+}
+
+/* 
 impl ApplicationHandler for TriangleAppTest {
 
     fn window_event
@@ -79,9 +100,23 @@ impl ApplicationHandler for TriangleAppTest {
             },
             _ => (),
         }
+        fn spawn_child_window(parent: &Window, event_loop: &ActiveEventLoop) -> Window{
+            let parent_window: winit::raw_window_handle::WindowHandle = parent.window_handle().unwrap();
+            
+            let mut window_attributes = Window::default_attributes()
+            .with_title("title")
+            .with_inner_size(LogicalSize::new(WIDTH, HEIGHT))
+            .with_position(Position::Logical(LogicalPosition::new(0.0, 0.0)))
+            .with_visible(true);
+            
+            //They make a unsafe function call here I wonder why? "window_attributes = unsafe { window_attributes.with_parent_window(Some(parent)) };"
+            //Should look into why that function is unsafe
+
+            return  event_loop.create_window(window_attributes).unwrap();
+        }
     }
 }
-
+*/
 /* 
 impl TriangleAppTest{
     pub fn initialize() -> Self {
@@ -161,7 +196,7 @@ impl TriangleAppTest{
 }*/
 
 pub fn vulkan_instance(){
-    let mut vulkan_app = TriangleAppTest::initialize();
+    //let mut vulkan_app = TriangleAppTest::initialize();
 
-    vulkan_app.main_loop();
+    //vulkan_app.main_loop();
 }

@@ -13,6 +13,7 @@ enum Renderer{
 
 fn main() {
     let render: Renderer = Renderer::Vulkan;
+    vulkan_context::inital_vulkan_test::vulkan_instance();
     match render {
         //Renderer::OpenGL => println!("OpenGl"),
         Renderer::Vulkan => println!("Vulkan")

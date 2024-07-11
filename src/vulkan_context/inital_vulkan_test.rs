@@ -22,12 +22,9 @@ use winit::{
         WindowEvent
     }, 
     event_loop::{
-        ActiveEventLoop, 
-        EventLoop
+        self, ActiveEventLoop, EventLoop
     }, 
-    raw_window_handle::{
-        HasWindowHandle
-    }, 
+    raw_window_handle::HasWindowHandle, 
     window::{
         self, 
         Window, 
@@ -59,7 +56,8 @@ struct TriangleAppTest{//This is probably the application itself
 
 impl TriangleAppTest {
 
-    fn initialize(event_loop: &EventLoop) -> Self {
+    fn initialize(event_loop: &EventLoop<()>) -> Self {
+        // SAFETY: we drop the context right before the event loop is stopped, thus making it safe.
         let context = Some(
             Context::new(unsafe {
                 std::mem::transmute::<DisplayHandle<'_>, DisplayHandle<'static>>(
@@ -233,7 +231,10 @@ impl TriangleAppTest{
 }*/
 
 pub fn vulkan_instance(){
-    //let mut vulkan_app = TriangleAppTest::initialize();
+    let event_loop = EventLoop::new().unwrap();
+    let mut vulkan_app = TriangleAppTest::initialize(&event_loop);
+    
+    vulkan_app.create_window(event_loop, None);
     
     //vulkan_app.main_loop();
 }

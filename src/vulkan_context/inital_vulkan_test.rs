@@ -2,11 +2,13 @@ extern crate vulkano;
 extern crate winit;
 
 use std::{
-    collections::HashMap, //Hashmap :)
-    sync::Arc//Some heap allocated thing (Should read more)
+    collections::HashMap, error::Error, sync::Arc//Some heap allocated thing (Should read more)
 };
 
-//Use winit::event_loop::{ActiveEventLoop, EventLoop};
+use rwh_06::{DisplayHandle, HasDisplayHandle};
+
+use softbuffer::{Context, Surface};
+
 use winit::{
     application::ApplicationHandler, 
     dpi::{
@@ -20,10 +22,10 @@ use winit::{
         WindowEvent
     }, 
     event_loop::{
-        self, ActiveEventLoop, EventLoop
+        ActiveEventLoop, 
+        EventLoop
     }, 
     raw_window_handle::{
-        HasRawWindowHandle, 
         HasWindowHandle
     }, 
     window::{
@@ -49,15 +51,50 @@ const HEIGHT: u32 = 600;
 struct TriangleAppTest{//This is probably the application itself
     //instance: Option<Arc<Instance>>, Implement later
     //parent_window_id: Option<WindowId>,
-    //windows: HashMap<WindowId, Window>,
-    window: Window
+    windows: HashMap<WindowId, Window>,
+    context: Option<Context<DisplayHandle<'static>>>,
+    //window: Window
 
 }
 
 impl TriangleAppTest {
-    fn test(){
-        let mut event_loop = EventLoop::new().unwrap();
-        let window = event_loop.create_window()
+
+    fn initialize(event_loop: &EventLoop) -> Self {
+        let context = Some(
+            Context::new(unsafe {
+                std::mem::transmute::<DisplayHandle<'_>, DisplayHandle<'static>>(
+                    event_loop.display_handle().unwrap(),
+                )
+            })
+            .unwrap(),
+        );
+
+        Self{
+            windows: Default::default(),
+            context: context,
+        }
+    }
+
+    fn create_window
+    (
+        &mut self, 
+        event_loop: &ActiveEventLoop, 
+        _tab_id: Option<String>
+    )-> Result<WindowId, Box<dyn Error>>{
+
+        let window_attributes = Window::default_attributes()
+        .with_title("window title")
+        .with_transparent(true)
+        //.with_window_icon(Some(()))
+        ;
+        
+        let window = event_loop.create_window(window_attributes)?;
+
+        //let window_state = WindowState::new(self, window)?;
+        let window_id = window.id();//Should use a window state
+        //info!("Created new window with id={window_id:?}");
+        self.windows.insert(window_id, window);//Should create a window state
+        Ok(window_id)
     }
 }
 
@@ -197,6 +234,6 @@ impl TriangleAppTest{
 
 pub fn vulkan_instance(){
     //let mut vulkan_app = TriangleAppTest::initialize();
-
+    
     //vulkan_app.main_loop();
 }

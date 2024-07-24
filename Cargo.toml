@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-vulkano = "0.34.0"
 winit = "0.30.3"
 rwh_06 = { package = "raw-window-handle", version = "0.6" }
 softbuffer = "0.4.5"

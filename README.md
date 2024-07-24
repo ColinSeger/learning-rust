@@ -4,11 +4,14 @@
   So what are some things I will try to do?
   <li>
     Create a application that can display 2D drawings
-  </li>  
-  <li>
-    Commit atleast 1 time each day no matter how minor
   </li>
   <li>
-    TODO
+    Figure out the windowing tool I chose to use (Winit)
+  </li>  
+  <li>
+    Commit atleast 1 time each day no matter how minor (As long as I am home)
+  </li>
+  <li>
+    TODO Make list of goals (Perhaps minecraft clone in the long run?)
   </li>
 </ul>

@@ -1,8 +1,8 @@
-extern crate vulkano;
-extern crate winit;
+#![allow(warnings)] //REMOVE LATER IMPORTANT
+//extern crate winit;
 
 mod open_gl_context;
-mod vulkan_context;
+mod window_context;
 
 //use open_gl_context::gl_window;
 
@@ -13,7 +13,7 @@ enum Renderer{
 
 fn main() {
     let render: Renderer = Renderer::Vulkan;
-    vulkan_context::inital_vulkan_test::vulkan_instance();
+    window_context::window_context::start_window();
     match render {
         //Renderer::OpenGL => println!("OpenGl"),
         Renderer::Vulkan => println!("Vulkan")

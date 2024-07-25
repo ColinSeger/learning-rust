@@ -1,4 +1,4 @@
-#![allow(warnings)] //REMOVE LATER IMPORTANT
+//#![allow(unused)] //REMOVE LATER IMPORTANT
 //extern crate winit;
 
 mod open_gl_context;
@@ -13,7 +13,9 @@ enum Renderer{
 
 fn main() {
     let render: Renderer = Renderer::Vulkan;
-    window_context::window_context::start_window();
+    let wind = window_context::window_context::start_window().expect("Window error");
+
+
     match render {
         //Renderer::OpenGL => println!("OpenGl"),
         Renderer::Vulkan => println!("Vulkan")

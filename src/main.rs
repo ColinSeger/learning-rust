@@ -13,8 +13,8 @@ enum Renderer{
 
 fn main() {
     let render: Renderer = Renderer::Vulkan;
-    let wind = window_context::window_context::start_window().expect("Window error");
-
+    //let wind = window_context::window_context::start_window().expect("Window error");
+    let wib = window_context::test::test();
 
     match render {
         //Renderer::OpenGL => println!("OpenGl"),

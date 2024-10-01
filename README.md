@@ -7,9 +7,6 @@
   </li>
   <li>
     Figure out the windowing tool I chose to use (Winit)
-  </li>  
-  <li>
-    Commit atleast 1 time each day no matter how minor (As long as I am home)
   </li>
   <li>
     TODO Make list of goals (Perhaps minecraft clone in the long run?)
